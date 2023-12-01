@@ -3,7 +3,7 @@ using RadioConformanceTests.Instruments;
 
 namespace RadioConformanceTests.TC;
 
-class TC_Sensitivity 
+public class TC_Sensitivity 
 {
     /// <summary>
     /// Test case configuration

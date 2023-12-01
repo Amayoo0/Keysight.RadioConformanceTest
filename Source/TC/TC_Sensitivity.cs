@@ -17,12 +17,13 @@ class TC_Sensitivity
     private double cfg_PowerStep_DBm = -10;
     private readonly IScpiClient scpi;
     private readonly IBseInstrument bse;
+    private readonly ILogger logger;
 
-    public TC_Sensitivity(string bseAddress)
+    public TC_Sensitivity(string bseAddress, ILogger loggerObject)
     {
         this.scpi = new ScpiClient(bseAddress);
         this.bse = new BseInstrument(this.scpi);
-        
+        this.logger = loggerObject;   
     }
 
     public TestVerdict Execute()
@@ -30,12 +31,12 @@ class TC_Sensitivity
         try
         {
             var finalVerdict = TestVerdict.Pass;
-            Console.WriteLine($"TC_Sensitivity::START");
+            logger.Info($"TC_Sensitivity::START");
 
             //Verify BSE instrument
             var verify = this.bse.verifyBSEInstrument();
             if( !verify ){
-                Console.WriteLine($"TC_Sensitivity::Fail Unknown instrument");
+                logger.Error($"TC_Sensitivity::Fail Unknown instrument");
                 return TestVerdict.Fail;
             }
 
@@ -49,21 +50,21 @@ class TC_Sensitivity
             {
                 for(double power=cfg_StartPower_DBm; power >= cfg_EndPower_DBm; power+=cfg_PowerStep_DBm)
                 {
-                    Console.WriteLine($"TC_Sensitivity:: Step {stepCount} Configure BSE {freq}MHz {power}dBm");
+                    logger.Info($"TC_Sensitivity:: Step {stepCount} Configure BSE {freq}MHz {power}dBm");
                     this.bse.configureCell(freq, power);
 
                     // Wait for UE to connect
                     Thread.Sleep(100);
 
                     if( !this.bse.ueIsConnected() ){
-                        Console.WriteLine($"TC_Sensitivity:: Step {stepCount} Fail");
+                        logger.Error($"TC_Sensitivity:: Step {stepCount} Fail");
                         finalVerdict = TestVerdict.Fail;
                     }
                     stepCount++;
                 }
             }
 
-            Console.WriteLine($"TC_Sensitivity:: {finalVerdict}");
+            logger.Info($"TC_Sensitivity:: {finalVerdict}");
             return finalVerdict;
         }
         catch
@@ -74,7 +75,7 @@ class TC_Sensitivity
         {
             // End Cell
             this.bse.endCell();
-            Console.WriteLine($"TC_Sensitivity::END");
+            logger.Info($"TC_Sensitivity::END");
         }
     }
 

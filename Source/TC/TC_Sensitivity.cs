@@ -15,15 +15,30 @@ class TC_Sensitivity
     private double cfg_StartPower_DBm = -10;
     private double cfg_EndPower_DBm = -90;
     private double cfg_PowerStep_DBm = -10;
-    private readonly IScpiClient scpi;
     private readonly IBseInstrument bse;
     private readonly ILogger logger;
 
-    public TC_Sensitivity(string bseAddress, ILogger loggerObject)
+    /* DUDA: Me he dado cuenta que no he refactorizado bien.
+    En el creador de esta clase debería haberle pasado un objeto
+    de tipo IBseInstrument para que la instancia se cree en nuestro Program.
+
+    Me he dado cuenta mientras hacia el TestCase y no sé cómo resolverlo
+    ¿debería hacerlo en un commit dentro de la rama que me he creado para 
+    la creación del TestCase? Creo que no es buena práctica, pues estás 
+    editando código que no es tuyo (mi tarea era crear el TestCase)...
+
+    Debería solucionarlo en esta rama TestCase o debería comunicarle al equipo
+    que realizó la Refactorización para que realicen los cambios en la rama de refactorización
+    y vuelcen de nuevo los cambios a la rama main. 
+
+    Voy a realizar la segunda opción. De no ser lo adecuado, por favor, indíquemelo.
+    Gracias :) 
+    */
+
+    public TC_Sensitivity(IBseInstrument instrumentObject, ILogger loggerObject)
     {
-        this.scpi = new ScpiClient(bseAddress);
-        this.bse = new BseInstrument(this.scpi);
-        this.logger = loggerObject;   
+        this.logger = loggerObject;
+        this.bse    = instrumentObject;
     }
 
     public TestVerdict Execute()

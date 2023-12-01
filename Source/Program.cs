@@ -1,5 +1,6 @@
 ﻿using RadioConformanceTests.TC;
 using RadioConformanceTests.Drivers;
+using RadioConformanceTests.Instruments;
 
 namespace RadioConformanceTests;
 
@@ -9,9 +10,13 @@ class Program
     static void Main(string[] args)
     {
         ILogger logger = new Logger();
+        IScpiClient BseConnection = new ScpiClient(BSE_ADDRESS);
+        IBseInstrument bse = new BseInstrument(BseConnection);
+        
+
         logger.Info("RadioConformanceTests - TC_Sensitivity : START");
         
-        TC_Sensitivity test = new TC_Sensitivity(BSE_ADDRESS, logger);
+        TC_Sensitivity test = new TC_Sensitivity(bse, logger);
         var testVerdict = test.Execute();
 
         logger.Info($"RadioConformanceTests - Verdict : {testVerdict}");

@@ -1,5 +1,4 @@
-﻿
-using RadioConformanceTests.TC;
+﻿using RadioConformanceTests.TC;
 
 namespace RadioConformanceTests;
 
